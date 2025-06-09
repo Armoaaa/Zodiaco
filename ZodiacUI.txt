@@ -1,0 +1,85 @@
+using System;
+using ZodiacModels;
+using ZodiacData; // Cambiado de ZodiacSign a ZodiacModels
+
+namespace ZodiacUI;
+
+public static class ZodiacUI
+{
+    private static int windowWidth = Console.WindowWidth;
+
+    public static DateTime PedirFechaNacimiento()
+    {
+        DateTime birthDate;
+        while (true)
+        {
+            Console.Clear();
+            DibujarTitulo("CALCULADORA DE SIGNO ZODIACAL");
+            
+            string prompt = "Ingrese su fecha de nacimiento (dd/mm/yyyy): ";
+            Console.SetCursorPosition((windowWidth - prompt.Length) / 2, Console.CursorTop);
+            Console.Write(prompt);
+            
+            bool valido = DateTime.TryParseExact(Console.ReadLine(), "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.None, out birthDate);
+
+            if (valido && birthDate.Year > 1900 && birthDate.Year <= DateTime.Now.Year)
+            {
+                return birthDate;
+            }
+
+            string error = "[!] Formato inválido o fecha no razonable. Presione una tecla para reintentar...";
+            Console.SetCursorPosition((windowWidth - error.Length) / 2, Console.CursorTop);
+            Console.WriteLine(error);
+            Console.ReadKey();
+        }
+    }
+
+    public static void MostrarSigno(ZodiacSign signo)
+    {
+        Console.Clear();
+        if (signo == null)
+        {
+            DibujarTitulo("RESULTADO");
+            string mensaje = "No se encontró un signo para esa fecha.";
+            Console.SetCursorPosition((windowWidth - mensaje.Length) / 2, Console.CursorTop);
+            Console.WriteLine(mensaje);
+        }
+        else
+        {
+            DibujarTitulo($"Tu signo es: {signo.Name}");
+            
+            string dateRange = $"Rango de fechas: {signo.DateRange}";
+            Console.SetCursorPosition((windowWidth - dateRange.Length) / 2, Console.CursorTop);
+            Console.WriteLine(dateRange + "\n");
+
+            string caracteristicas = "Características:";
+            Console.SetCursorPosition((windowWidth - caracteristicas.Length) / 2, Console.CursorTop);
+            Console.WriteLine(caracteristicas);
+            
+            foreach (string caracteristica in signo.Characteristics)
+            {
+                Console.SetCursorPosition((windowWidth - caracteristica.Length - 2) / 2, Console.CursorTop);
+                Console.WriteLine($"- {caracteristica}");
+            }
+        }
+
+        string salir = "\nPresione una tecla para salir...";
+        Console.SetCursorPosition((windowWidth - salir.Length) / 2, Console.CursorTop + 1);
+        Console.WriteLine(salir);
+        Console.ReadKey();
+    }
+
+    private static void DibujarTitulo(string titulo)
+    {
+        string linea = new string('=', titulo.Length + 4);
+        string tituloFormateado = $"= {titulo} =";
+
+        Console.SetCursorPosition((windowWidth - linea.Length) / 2, Console.CursorTop);
+        Console.WriteLine(linea);
+        Console.SetCursorPosition((windowWidth - tituloFormateado.Length) / 2, Console.CursorTop);
+        Console.WriteLine(tituloFormateado);
+        Console.SetCursorPosition((windowWidth - linea.Length) / 2, Console.CursorTop);
+        Console.WriteLine(linea);
+        Console.WriteLine();
+    }
+}
